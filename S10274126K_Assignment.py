@@ -326,6 +326,7 @@ def show_shop_menu():
 
 #This function upgrades the backpack capacity    
 def backpack_upgrade(backpack_price):
+    global player
     player['backpack'] += 2
     player['GP'] -= backpack_price
     
@@ -376,10 +377,22 @@ while True:
             print('Invalid input.')
             
     elif game_state == 'shop':
-        action = show_shop_menu()
-        if 
+        backpack_price, action = show_shop_menu()
+        if action == 'B':
+            if player['GP'] >= backpack_price:
+                backpack_upgrade()
+                print('Congratulations! You can now carry {} items.'
+                      .format(player['backpack']))
+                game_state = 'shop'
+            else:
+                print('Sorry you dont have enough GP.')
+                game_state = 'shop'
+        elif action == 'L':
+            show_town_menu()
+            game_state = 'town'
         else:
             print('Invalid input.')
+            
     elif game_state == 'mine':
         mine()  # inside this, game_state might be changed to 'town'
         if 
