@@ -249,15 +249,32 @@ def show_information():
 
 # This function saves the game
 def save_game(game_map, fog, player):
+    count = 1
+    map_save = 'map_save.txt'
+    fog_save = 'fog_save.txt'
+    player_save = 'player_save.txt'
+    
     # save map
+    with open(map_save, 'w') as map_file:
+        map_file.write(game_map)
+        
     # save fog
+    with open(fog_save, 'w') as fog_file:
+        fog_file.write(fog)
+        
     # save player
+    with open(player_save, 'w') as player_file:
+        player_file.write(player)
+        
+    count += 1
     return
 
         
 # This function loads the game
 def load_game(game_map, fog, player):
     # load map
+    with open('map_save.txt', 'r') as map_file:
+        
     # load fog
     # load player
     return
