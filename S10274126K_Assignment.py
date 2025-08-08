@@ -199,9 +199,9 @@ def show_mine_menu():
 # This function draws the entire map, covered by the fog
 def draw_map(game_map, fog, player):
     print('+' + '-'*MAP_WIDTH + '+')
-    for y in range(8, len(game_map)):
+    for y in range(len(game_map)):
         row = '|'
-        for x in range(8, len(game_map[y])):
+        for x in range(len(game_map[y])):
             if (x, y) == (player['x'], player['y']):
                 row += player['symbol']
             elif portal_location != None and (x,y) == portal_location:
@@ -229,7 +229,7 @@ def draw_view(game_map, fog, player):
 
 
 # This function shows the information for the player
-def show_information(player):
+def show_information():
     print('----- Player Information -----')
     print('Name: {}'.format(player['name']))
     print('Portal position: ({}, {})'.format(player['x'], player['y']))
@@ -367,7 +367,6 @@ while True:
             show_information()
         elif action == 'M':
             draw_map(game_map, fog, player)
-            show_town_menu()
         elif action == 'V':
             save_game(game_map, fog, player)
             print("Game saved.")
@@ -395,7 +394,8 @@ while True:
             
     elif game_state == 'mine':
         mine()  # inside this, game_state might be changed to 'town'
-        if 
+        if action == 'B':
+            print('hi')
         else:
             print('Invalid input.')
 
