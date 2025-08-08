@@ -83,7 +83,7 @@ def initialize_game(game_map, fog, player, name):
  
  
 # This function is for when player in mine    
-def mine(mine_menu_input):
+def mine():
     global game_map, fog, player, game_state
     x, y = 0, 0
     if mine_menu_input == 'W':
@@ -357,6 +357,9 @@ while True:
             show_information()
         elif action == 'M':
             draw_map(game_map, fog, player)
+        elif action == 'E':
+            mine()
+            game_state = 'mine'
         elif action == 'V':
             save_game(game_map, fog, player)
             print("Game saved.")
