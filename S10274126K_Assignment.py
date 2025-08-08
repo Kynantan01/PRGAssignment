@@ -352,7 +352,11 @@ while True:
             load_game(game_map, fog, player)
             game_state = 'town'
         elif action == 'Q':
+            game_state = 'main'
             break
+        else:
+            print('Invalid input.')
+            game_state = 'town'
 
     elif game_state == 'town':
         action = show_town_menu()
@@ -368,10 +372,18 @@ while True:
             print("Game saved.")
         elif action == 'Q':
             game_state = 'main'
+        else:
+            print('Invalid input.')
             
     elif game_state == 'shop':
         action = show_shop_menu()
+        if 
+        else:
+            print('Invalid input.')
     elif game_state == 'mine':
         mine()  # inside this, game_state might be changed to 'town'
+        if 
+        else:
+            print('Invalid input.')
 
 
