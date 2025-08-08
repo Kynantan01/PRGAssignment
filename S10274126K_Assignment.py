@@ -74,7 +74,7 @@ def initialize_game(game_map, fog, player, name):
     player['turns'] = TURNS_PER_DAY
     player['name'] = name
     player['backpack'] = 10
-    player['pickaxe'] = 1
+    player['pickaxe_lvl'] = 1
     player['pickaxe_mineral'] = 'copper'
     player['load'] = 0
     player['steps'] = 0
@@ -109,6 +109,20 @@ def mine(mine_menu_input):
         return
     
     tile = game_map[new_y][new_x]
+    
+    pickaxe_minerals = {
+        1 : ['C'],
+        2 : ['C', 'S'],
+        3 : ['C', 'S', 'G']
+    }
+    
+    mineable_minerals = pickaxe_minerals[player['pickaxe_lvl']]
+    
+    if tile in mineral_names and tile not in mineable_minerals:
+        print('Your pickaxe is not strong enough to mine this.')
+        return
+    
+    
     
     if tile in mineral_names:
         if player['load'] >= player['backpack']:
@@ -222,7 +236,8 @@ def show_information():
     print('----- Player Information -----')
     print('Name: {}'.format(player['name']))
     print('Portal position: ({}, {})'.format(player['x'], player['y']))
-    print('Pickaxe level: {} ({})'.format(player['pickaxe'], player['pickaxe_mineral']))
+    print('Pickaxe level: {} ({})'
+          .format(player['pickaxe_lvl'], player['pickaxe_mineral']))
     print('------------------------------')
     print('Load: {}/{}'.format(player['load'] ,player['backpack']))
     print('------------------------------')
@@ -300,27 +315,43 @@ def show_town_menu():
 def show_shop_menu():
     new_capacity = player['backpack']+2
     backpack_price = player['backpack']*2
+    new_pickaxe = player['pickaxe_lvl']+1
+    if player['pickaxe_lvl'] + 1 == 2:
+        pickaxe_price = 50
+    elif player['pickaxe_lvl'] + 1 == 3:
+        pickaxe_price = 150
+    
     print()
     print("----------------------- Shop Menu -------------------------")
-    print("(P)ickaxe upgrade to Level 2 to mine silver ore for 50 GP")
-    print("(B)ackpack upgrade to carry {} items for {} GP".format(new_capacity, backpack_price))
+    if player['pickaxe_lvl'] < 3:
+        print("(P)ickaxe upgrade to Level {} to mine silver ore for {} GP"
+            .format(new_pickaxe, pickaxe_price))
+    print("(B)ackpack upgrade to carry {} items for {} GP"
+          .format(new_capacity, backpack_price))
     print("(L)eave shop")
     print("-----------------------------------------------------------")
     print("GP: {}".format(player['GP']))
     print("-----------------------------------------------------------")
     shop_menu_input = input('Your choice? ').upper()
-    return backpack_price, shop_menu_input
+    return backpack_price, pickaxe_price, shop_menu_input
 
 
-#This function upgrades the backpack capacity    
+# This function upgrades the backpack capacity    
 def backpack_upgrade(backpack_price):
     global player
     player['backpack'] += 2
     player['GP'] -= backpack_price
     
 
-
-    
+# This function upgrades the pickaxe
+def pickaxe_upgrade(pickaxe_price):
+    global player
+    player['pickaxe_lvl'] += 1
+    if player['pickaxe_lvl'] == 2:
+        player['pickaxe_mineral'] = 'silver'
+    elif player['pickaxe_lvl'] == 3:
+        player['pickaxe_mineral'] = 'gold'
+    player['GP'] -= pickaxe_price    
             
 
 #--------------------------- MAIN GAME ---------------------------
@@ -369,8 +400,16 @@ while True:
             print('Invalid input.')
             
     elif game_state == 'shop':
-        backpack_price, action = show_shop_menu()
-        if action == 'B':
+        backpack_price, pickaxe_price, action = show_shop_menu()
+        if player['pickaxe_lvl'] < 3:
+            if action == 'P':
+                if player['GP'] >= pickaxe_price:
+                    pickaxe_upgrade(pickaxe_price)
+                    if player['pickaxe_lvl'] == 2:
+                        print('Congratulations! You can now mine silver!')
+                    elif player['pickaxe_lvl'] == 3:
+                        print('Congratulations! You can now mine gold!')
+        elif action == 'B':
             if player['GP'] >= backpack_price:
                 backpack_upgrade(backpack_price)
                 print('Congratulations! You can now carry {} items.'
