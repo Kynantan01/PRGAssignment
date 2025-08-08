@@ -94,6 +94,9 @@ def mine(mine_menu_input):
        y = 1
     elif mine_menu_input == 'D':
         x = 1
+    else:
+        print('Invalid input.')
+        return
     
     new_x = player['x'] + x
     new_y = player['y'] + y
@@ -120,7 +123,7 @@ def mine(mine_menu_input):
                 max_amount = 2
             mined = randint(1,max_amount)
             
-            space = player['backapck'] - player['load']
+            space = player['backpack'] - player['load']
             if mined > space:
                 print('You mined {} pieces of {}'.format(mined, mineral_names[tile]))
                 print('...but you can only carry {} more piece(s)!'.format(space))
@@ -174,14 +177,15 @@ def show_mine_menu():
     
 # This function draws the entire map, covered by the fog
 def draw_map(game_map, fog, player):
+    global portal_location
     print('+' + '-'*MAP_WIDTH + '+')
     for y in range(len(game_map)):
         row = '|'
         for x in range(len(game_map[y])):
-            if (x, y) == (player['x'], player['y']):
-                row += player['symbol']
-            elif portal_location != None and (x,y) == portal_location:
+            if portal_location != None and (x,y) == portal_location:
                 row += 'P'
+            elif (x, y) == (player['x'], player['y']):
+                row += player['symbol']
             else:
                 row += fog[y][x]
         row += '|'
@@ -314,6 +318,9 @@ def backpack_upgrade(backpack_price):
     player['backpack'] += 2
     player['GP'] -= backpack_price
     
+
+
+    
             
 
 #--------------------------- MAIN GAME ---------------------------
@@ -365,7 +372,7 @@ while True:
         backpack_price, action = show_shop_menu()
         if action == 'B':
             if player['GP'] >= backpack_price:
-                backpack_upgrade()
+                backpack_upgrade(backpack_price)
                 print('Congratulations! You can now carry {} items.'
                       .format(player['backpack']))
             else:
@@ -397,6 +404,13 @@ while True:
         elif action == 'Q':
             game_state = 'main'      
         else:
-            print('Invalid input.')
+            mine(action)
+            
+    elif player['GP'] >= 500:
+        print('Woo-hoo! Well done, {}, you have {} GP!'
+              .format(player['name'], player['GP']))
+        print('You now have enough to retire and play video games evry day.')
+        print('And it only took you 18 days and 114 steps! You win!')
+        game_state = 'main'
 
 
