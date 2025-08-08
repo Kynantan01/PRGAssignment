@@ -1,3 +1,5 @@
+# Kynan Tan S10274126K 
+# This is a program of a game called Sundrop Caves
 from random import randint
 
 player = {}
