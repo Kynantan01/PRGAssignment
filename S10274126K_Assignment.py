@@ -248,36 +248,57 @@ def show_information():
 
 
 # This function saves the game
-def save_game(game_map, fog, player):
-    count = 1
+def save_game():
+    global game_map, fog, player
     map_save = 'map_save.txt'
     fog_save = 'fog_save.txt'
     player_save = 'player_save.txt'
     
     # save map
     with open(map_save, 'w') as map_file:
-        map_file.write(game_map)
+        for row in game_map:
+            map_file.write(''.join(row) + '\n')
         
     # save fog
     with open(fog_save, 'w') as fog_file:
-        fog_file.write(fog)
+        for row in fog:
+            fog_file.write(''.join(row) + '\n')
         
     # save player
     with open(player_save, 'w') as player_file:
-        player_file.write(player)
-        
-    count += 1
+        for key, value in player.items:
+            player_file.write('{}={}\n'.format(key, value))
     return
 
         
 # This function loads the game
-def load_game(game_map, fog, player):
+def load_game():
+    global game_map, fog, player
+    
     # load map
     with open('map_save.txt', 'r') as map_file:
+        game_map.clear()
+        for line in map_file:
+            game_map.append(list(line.rstrip('\n')))
         
     # load fog
+    with open('fog_save.txt', 'r') as fog_file:
+        fog.clear()
+        for line in fog_file:
+            fog.append(list(line.rstrip('\n')))
+        
     # load player
-    return
+    with open('player_save.txt', 'r') as player_file:
+        player.clear()
+        for line in player_file:
+            line = line.strip()
+            if not line:
+                continue
+            key, value = line.split('=')
+            if value.isdigit():
+                value = int(value)
+            player[key] = value
+    return 
 
 
 # This function prints the main menu
