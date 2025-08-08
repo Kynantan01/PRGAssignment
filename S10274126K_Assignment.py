@@ -83,7 +83,7 @@ def initialize_game(game_map, fog, player, name):
  
  
 # This function is for when player in mine    
-def mine():
+def mine(mine_menu_input):
     global game_map, fog, player, game_state
     x, y = 0, 0
     if mine_menu_input == 'W':
@@ -94,20 +94,6 @@ def mine():
        y = 1
     elif mine_menu_input == 'D':
         x = 1
-        
-        copper, copper_earned = sell_minerals()
-        print('You sell {} copper ore for {} GP.'.format(copper, copper_earned))
-        print('You now have {} GP!'.format(player['GP']))
-        
-        player['day'] += 1
-        player['turns'] = TURNS_PER_DAY
-        player['load'] = 0
-        
-        game_state = 'town'
-        return
-    elif mine_menu_input == 'Q':
-        game_state = 'main'
-        return
     
     new_x = player['x'] + x
     new_y = player['y'] + y
@@ -206,16 +192,25 @@ def draw_map(game_map, fog, player):
 
 # This function draws the 3x3 viewport
 def draw_view(game_map, fog, player):
-    print('+' + '-'*3 +'+')
-    for y in range(player['y']-1, player['y']+2):
+    vision_radius = 3
+    start_x = max(0, player['x'] - vision_radius)
+    start_y = max(0, player['y'] - vision_radius)
+    end_x = min(len(game_map[0]), player['x'] + vision_radius + 1)
+    end_y = min(len(game_map), player['y'] + vision_radius + 1)
+
+    print('+' + '-' * (end_x - start_x) + '+')
+    for y in range(start_y, end_y):
         row = '|'
-        for x in range(player['x']-1, player['x']+2):
-            if 0 <= y < len(game_map) and 0 <= x < len(game_map[0]):
-                row += game_map[y][x]
+        for x in range(start_x, end_x):
+            if (x, y) == (player['x'], player['y']):
+                row += player['symbol']
+            elif portal_location is not None and (x, y) == portal_location:
+                row += 'P'
+            else:
+                row += fog[y][x]
         row += '|'
         print(row)
-    
-    print('+' + '-'*3 +'+')
+    print('+' + '-' * (end_x - start_x) + '+')
 
 
 # This function shows the information for the player
@@ -230,7 +225,6 @@ def show_information():
     print('GP: {}'.format(player['GP']))
     print('Steps taken: {}'.format(player['steps']))
     print('------------------------------')
-    show_town_menu()
     return
 
 
@@ -358,7 +352,6 @@ while True:
         elif action == 'M':
             draw_map(game_map, fog, player)
         elif action == 'E':
-            mine()
             game_state = 'mine'
         elif action == 'V':
             save_game(game_map, fog, player)
@@ -388,10 +381,19 @@ while True:
         if action == 'M':
             draw_map(game_map, fog, player)
         elif action == 'I':
-            show_information(player)
+            show_information()
         elif action == 'P':
             print('You place your portal stone here and zap back to town.')
             portal_location = (player['x'], player['y'])
+            copper, copper_earned = sell_minerals()
+            print('You sell {} copper ore for {} GP.'.format(copper, copper_earned))
+            print('You now have {} GP!'.format(player['GP']))
+            
+            player['day'] += 1
+            player['turns'] = TURNS_PER_DAY
+            player['load'] = 0
+            
+            game_state = 'town'
         elif action == 'Q':
             game_state = 'main'      
         else:
