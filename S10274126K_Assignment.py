@@ -94,16 +94,6 @@ def mine(mine_menu_input):
        y = 1
     elif mine_menu_input == 'D':
         x = 1
-    elif mine_menu_input == 'M':
-         draw_map(game_map, fog, player)
-         return
-    elif mine_menu_input == 'I':
-        show_information(player)
-        return
-    elif mine_menu_input == 'P':
-        print('You place your portal stone here and zap back to town.')
-        global portal_location
-        portal_location = (player['x'], player['y'])
         
         copper, copper_earned = sell_minerals()
         print('You sell {} copper ore for {} GP.'.format(copper, copper_earned))
@@ -382,10 +372,8 @@ while True:
                 backpack_upgrade()
                 print('Congratulations! You can now carry {} items.'
                       .format(player['backpack']))
-                game_state = 'shop'
             else:
                 print('Sorry you dont have enough GP.')
-                game_state = 'shop'
         elif action == 'L':
             show_town_menu()
             game_state = 'town'
@@ -393,9 +381,16 @@ while True:
             print('Invalid input.')
             
     elif game_state == 'mine':
-        mine()  # inside this, game_state might be changed to 'town'
-        if action == 'B':
-            print('hi')
+        action = show_mine_menu()
+        if action == 'M':
+            draw_map(game_map, fog, player)
+        elif action == 'I':
+            show_information(player)
+        elif action == 'P':
+            print('You place your portal stone here and zap back to town.')
+            portal_location = (player['x'], player['y'])
+        elif action == 'Q':
+            game_state = 'main'      
         else:
             print('Invalid input.')
 
