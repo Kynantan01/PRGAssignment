@@ -6,6 +6,7 @@ player = {}
 game_map = []
 fog = []
 portal_location = None
+magic_torch = False
 
 MAP_WIDTH = 0
 MAP_HEIGHT = 0
@@ -212,25 +213,46 @@ def draw_map(game_map, fog, player):
 
 # This function draws the 3x3 viewport
 def draw_view(game_map, fog, player):
-    vision_radius = 3
-    start_x = max(0, player['x'] - vision_radius)
-    start_y = max(0, player['y'] - vision_radius)
-    end_x = min(len(game_map[0]), player['x'] + vision_radius + 1)
-    end_y = min(len(game_map), player['y'] + vision_radius + 1)
+    if magic_torch == False:
+        vision_radius = 2
+        start_x = max(0, player['x'] - vision_radius)
+        start_y = max(0, player['y'] - vision_radius)
+        end_x = min(len(game_map[0]), player['x'] + vision_radius + 1)
+        end_y = min(len(game_map), player['y'] + vision_radius + 1)
 
-    print('+' + '-' * (end_x - start_x) + '+')
-    for y in range(start_y, end_y):
-        row = '|'
-        for x in range(start_x, end_x):
-            if (x, y) == (player['x'], player['y']):
-                row += player['symbol']
-            elif portal_location is not None and (x, y) == portal_location:
-                row += 'P'
-            else:
-                row += fog[y][x]
-        row += '|'
-        print(row)
-    print('+' + '-' * (end_x - start_x) + '+')
+        print('+' + '-' * (end_x - start_x) + '+')
+        for y in range(start_y, end_y):
+            row = '|'
+            for x in range(start_x, end_x):
+                if (x, y) == (player['x'], player['y']):
+                    row += player['symbol']
+                elif portal_location is not None and (x, y) == portal_location:
+                    row += 'P'
+                else:
+                    row += fog[y][x]
+            row += '|'
+            print(row)
+        print('+' + '-' * (end_x - start_x) + '+')
+    else:
+        vision_radius = 2
+        start_x = max(0, player['x'] - vision_radius)
+        start_y = max(0, player['y'] - vision_radius)
+        end_x = min(len(game_map[0]), player['x'] + vision_radius + 1)
+        end_y = min(len(game_map), player['y'] + vision_radius + 1)
+
+        print('+' + '-' * (end_x - start_x) + '+')
+        for y in range(start_y, end_y):
+            row = '|'
+            for x in range(start_x, end_x):
+                if (x, y) == (player['x'], player['y']):
+                    row += player['symbol']
+                elif portal_location is not None and (x, y) == portal_location:
+                    row += 'P'
+                else:
+                    row += fog[y][x]
+            row += '|'
+            print(row)
+        print('+' + '-' * (end_x - start_x) + '+')
 
 
 # This function shows the information for the player
@@ -356,6 +378,7 @@ def show_shop_menu():
     new_capacity = player['backpack']+2
     backpack_price = player['backpack']*2
     new_pickaxe = player['pickaxe_lvl']+1
+    magic_torch_price = 50
     if player['pickaxe_lvl'] + 1 == 2:
         pickaxe_price = 50
     elif player['pickaxe_lvl'] + 1 == 3:
@@ -368,6 +391,9 @@ def show_shop_menu():
             .format(new_pickaxe, pickaxe_price))
     print("(B)ackpack upgrade to carry {} items for {} GP"
           .format(new_capacity, backpack_price))
+    if magic_torch == False:
+        print('(M)agic torch upgrade to see more in the mine for {} GP.'
+              .format(magic_torch_price))
     print("(L)eave shop")
     print("-----------------------------------------------------------")
     print("GP: {}".format(player['GP']))
@@ -419,7 +445,6 @@ while True:
             break
         else:
             print('Invalid input.')
-            game_state = 'town'
 
     elif game_state == 'town':
         action = show_town_menu()
@@ -456,6 +481,11 @@ while True:
                       .format(player['backpack']))
             else:
                 print('Sorry you dont have enough GP.')
+        if magic_torch == False:        
+            if action == 'M':
+                if player['GP'] >= 50:
+                    magic_torch = True
+                    print('Congratulations! You can now see further.')       
         elif action == 'L':
             show_town_menu()
             game_state = 'town'
