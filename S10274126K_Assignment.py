@@ -7,6 +7,7 @@ game_map = []
 fog = []
 portal_location = None
 magic_torch = False
+winner = {}
 
 MAP_WIDTH = 0
 MAP_HEIGHT = 0
@@ -382,6 +383,8 @@ def show_shop_menu():
         pickaxe_price = 50
     elif player['pickaxe_lvl'] + 1 == 3:
         pickaxe_price = 150
+    else:
+        pickaxe_price = 0
     
     print()
     print("----------------------- Shop Menu -------------------------")
@@ -418,6 +421,15 @@ def pickaxe_upgrade(pickaxe_price):
         player['pickaxe_mineral'] = 'gold'
     player['GP'] -= pickaxe_price    
             
+# This function shows the top scores
+def show_top_scores():
+    global winner
+    count = 1
+    winner['name{}'.format(count)] = player['name']
+    winner['days{}'.format(count)] = player['days']
+    winner['GP{}'.format(count)] = player['GP']
+    winner['steps{}'.format(count)] = player['steps']
+
 
 #--------------------------- MAIN GAME ---------------------------
 game_state = 'main'
@@ -444,6 +456,14 @@ while True:
             break
         else:
             print('Invalid input.')
+            
+    elif player['GP'] >= 500:
+        print('Woo-hoo! Well done, {}, you have {} GP!'
+              .format(player['name'], player['GP']))
+        print('You now have enough to retire and play video games evry day.')
+        print('And it only took you 18 days and 114 steps! You win!')
+        winner['name'] = player['name']
+        game_state = 'main'
 
     elif game_state == 'town':
         action = show_town_menu()
@@ -465,8 +485,10 @@ while True:
             
     elif game_state == 'shop':
         backpack_price, pickaxe_price, action = show_shop_menu()
+        cor_input = False
         if player['pickaxe_lvl'] < 3:
             if action == 'P':
+                cor_input = True
                 if player['GP'] >= pickaxe_price:
                     pickaxe_upgrade(pickaxe_price)
                     if player['pickaxe_lvl'] == 2:
@@ -477,6 +499,7 @@ while True:
                         print("Sorry you don't have enough GP.")
                         
         if action == 'B':
+            cor_input = True
             if player['GP'] >= backpack_price:
                 backpack_upgrade(backpack_price)
                 print('Congratulations! You can now carry {} items.'
@@ -486,6 +509,7 @@ while True:
                 
         if magic_torch == False:        
             if action == 'M':
+                cor_input = True
                 if player['GP'] >= 50:
                     magic_torch = True
                     player['GP'] -= 50
@@ -494,9 +518,10 @@ while True:
                     print("Sorry you don't have enough GP.") 
                           
         if action == 'L':
-            show_town_menu()
+            cor_input = True
             game_state = 'town'
-        else:
+            
+        if cor_input == False:
             print('Invalid input.')
             
     elif game_state == 'mine':
@@ -522,11 +547,6 @@ while True:
         else:
             mine(action)
             
-    elif player['GP'] >= 500:
-        print('Woo-hoo! Well done, {}, you have {} GP!'
-              .format(player['name'], player['GP']))
-        print('You now have enough to retire and play video games evry day.')
-        print('And it only took you 18 days and 114 steps! You win!')
-        game_state = 'main'
+    
 
 
