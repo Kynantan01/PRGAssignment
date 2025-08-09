@@ -16,7 +16,6 @@ WIN_GP = 500
 
 minerals = ['copper', 'silver', 'gold']
 mineral_names = {'C': 'copper', 'S': 'silver', 'G': 'gold'}
-pickaxe_price = [50, 150]
 
 prices = {}
 prices['copper'] = (1, 3)
@@ -474,19 +473,27 @@ while True:
                         print('Congratulations! You can now mine silver!')
                     elif player['pickaxe_lvl'] == 3:
                         print('Congratulations! You can now mine gold!')
-        elif action == 'B':
+                else:
+                        print("Sorry you don't have enough GP.")
+                        
+        if action == 'B':
             if player['GP'] >= backpack_price:
                 backpack_upgrade(backpack_price)
                 print('Congratulations! You can now carry {} items.'
                       .format(player['backpack']))
             else:
                 print('Sorry you dont have enough GP.')
+                
         if magic_torch == False:        
             if action == 'M':
                 if player['GP'] >= 50:
                     magic_torch = True
-                    print('Congratulations! You can now see further.')       
-        elif action == 'L':
+                    player['GP'] -= 50
+                    print('Congratulations! You can now see further.')
+                else:
+                    print("Sorry you don't have enough GP.") 
+                          
+        if action == 'L':
             show_town_menu()
             game_state = 'town'
         else:
