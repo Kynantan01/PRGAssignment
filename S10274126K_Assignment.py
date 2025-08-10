@@ -8,6 +8,7 @@ fog = []
 portal_location = None
 magic_torch = False
 winner = {}
+top_scores = []
 
 MAP_WIDTH = 0
 MAP_HEIGHT = 0
@@ -331,7 +332,7 @@ def show_main_menu():
     print("--- Main Menu ----")
     print("(N)ew game")
     print("(L)oad saved game")
-#    print("(H)igh scores")
+    print("(H)igh scores")
     print("(Q)uit")
     print("------------------")
     main_menu_input = input('Your choice? ').upper()
@@ -421,14 +422,45 @@ def pickaxe_upgrade(pickaxe_price):
         player['pickaxe_mineral'] = 'gold'
     player['GP'] -= pickaxe_price    
             
+            
+# This function creates a file of the top scores
+def save_top_scores():
+    global player
+    with open('top_scores.txt', 'a') as scores_file:
+        scores_file.write('{},{},{},{}\n'
+                          .format(player['name'], player['days'],player['GP'], player['steps']))
+        
+        
+# This function loads the top scores
+def load_top_scores():
+    global top_scores
+    with open('top_scores.txt', 'r') as scores_file:
+        for line in scores_file:
+            name, days, gp, steps =line.strip().split(',')
+            top_scores.append({
+                'name' : name,
+                'days' : int(days),
+                'gp' : int(gp),
+                'steps' : int(steps)   
+            })
+            
+    top_scores.sort(key=lambda s: (s['days'], s['steps'], -s['gp']))
+        
+            
 # This function shows the top scores
 def show_top_scores():
-    global winner
+    load_top_scores()
+    print()
+    print('---------------- Top 5 Sundrop Caves Players ----------------')
+    if not top_scores:
+        print('No scores yet!')
+        return
+    print("{:<5} {:<15} {:<10} {:<10} {:<10}".format('Rank', 'Name', 'Days', 'Steps', 'GP'))
     count = 1
-    winner['name{}'.format(count)] = player['name']
-    winner['days{}'.format(count)] = player['days']
-    winner['GP{}'.format(count)] = player['GP']
-    winner['steps{}'.format(count)] = player['steps']
+    for s in top_scores[:5]:
+        print('{}. {:<15}, {:<10}, {:<10}, {:<10}'
+              .format(count, s['name'], s['days'], s['steps'], s['gp']))
+    count += 1
 
 
 #--------------------------- MAIN GAME ---------------------------
@@ -454,6 +486,8 @@ while True:
         elif action == 'Q':
             game_state = 'main'
             break
+        elif action == 'H':
+            show_top_scores()
         else:
             print('Invalid input.')
             
