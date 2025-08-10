@@ -291,7 +291,7 @@ def save_game():
         
     # save player
     with open(player_save, 'w') as player_file:
-        for key, value in player.items:
+        for key, value in player.items():
             player_file.write('{}={}\n'.format(key, value))
     return
 
@@ -428,7 +428,7 @@ def save_top_scores():
     global player
     with open('top_scores.txt', 'a') as scores_file:
         scores_file.write('{},{},{},{}\n'
-                          .format(player['name'], player['days'],player['GP'], player['steps']))
+                          .format(player['name'], player['day'],player['GP'], player['steps']))
         
         
 # This function loads the top scores
@@ -455,12 +455,12 @@ def show_top_scores():
     if not top_scores:
         print('No scores yet!')
         return
-    print("{:<5} {:<15} {:<10} {:<10} {:<10}".format('Rank', 'Name', 'Days', 'Steps', 'GP'))
+    print("{:<5} {:<15} {:<10} {:<10} {:<10}".format('Rank', 'Name', 'Days', 'GP', 'Steps'))
     count = 1
     for s in top_scores[:5]:
         print('{}. {:<15}, {:<10}, {:<10}, {:<10}'
-              .format(count, s['name'], s['days'], s['steps'], s['gp']))
-    count += 1
+              .format(count, s['name'], s['days'], s['gp'], s['steps']))
+        count += 1
 
 
 #--------------------------- MAIN GAME ---------------------------
@@ -495,7 +495,8 @@ while True:
         print('Woo-hoo! Well done, {}, you have {} GP!'
               .format(player['name'], player['GP']))
         print('You now have enough to retire and play video games evry day.')
-        print('And it only took you 18 days and 114 steps! You win!')
+        print('And it only took you {} days and {} steps! You win!'
+              .format(player['day'], player['steps']))
         winner['name'] = player['name']
         game_state = 'main'
 
@@ -580,7 +581,3 @@ while True:
             game_state = 'main'      
         else:
             mine(action)
-            
-    
-
-
