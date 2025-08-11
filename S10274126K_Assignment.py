@@ -169,6 +169,7 @@ def mine(mine_menu_input):
         print('You are exhausted.')
         print('You place your portal stone here and zap back to town.')
         copper, copper_earned = sell_minerals()
+        portal_location = (player['x'], player['y'])
         print('You sell {} copper ore for {} GP.'.format(copper, copper_earned))
         print('You now have {} GP!'.format(player['GP']))
         player['day'] += 1
