@@ -30,7 +30,6 @@ def load_map(filename, map_struct):
     global MAP_WIDTH
     global MAP_HEIGHT
     
-    map_struct.clear()
     
     with open('level1.txt', 'r') as map_file:
         for line in map_file:
