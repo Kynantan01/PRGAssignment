@@ -215,7 +215,7 @@ def draw_map(game_map, fog, player):
 # This function draws the 3x3 viewport
 def draw_view(game_map, fog, player):
     if magic_torch == False:
-        vision_radius = 2
+        vision_radius = 1
         start_x = max(0, player['x'] - vision_radius)
         start_y = max(0, player['y'] - vision_radius)
         end_x = min(len(game_map[0]), player['x'] + vision_radius + 1)
