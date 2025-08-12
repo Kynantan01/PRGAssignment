@@ -511,7 +511,7 @@ while True:
         elif action == 'E':
             game_state = 'mine'
         elif action == 'V':
-            save_game(game_map, fog, player)
+            save_game()
             print("Game saved.")
         elif action == 'Q':
             game_state = 'main'
